@@ -1,0 +1,6 @@
+apiVersion: v2
+name: my-app
+description: A tiny Flask app
+type: application
+version: 0.1.0 #chart's version
+appVersion: "0.1.0"   # this will be overwritten by developers
