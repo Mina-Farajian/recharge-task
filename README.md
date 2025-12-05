@@ -16,7 +16,7 @@ Local setup that:
    ./deploy.sh
 
 
-
+```
 recharge-terraform/
 ├─ app/
 │  ├─ app.py
@@ -40,4 +40,4 @@ recharge-terraform/
 │  └─ main.tf
 ├─ deploy.sh
 └─ README.md
-
+```
