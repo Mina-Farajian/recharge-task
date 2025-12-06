@@ -42,6 +42,7 @@ fi
 echo "Running Terraform..."
 pushd "$ROOT/terraform" >/dev/null
 terraform init -upgrade
+echo $MINIKUBE_IP
 terraform apply -auto-approve
 popd >/dev/null
 
