@@ -40,23 +40,8 @@ if ! pgrep -f moto_server >/dev/null; then
 fi
 
 
-#echo "Checking namespaces..."
-#kubectl get ns istio-system
-#
-#echo "Checking Istio CRDs..."
-#kubectl get crd
-#
-#echo "Checking Gateway API..."
-#kubectl api-resources | grep Gateway
-#
-#echo "Checking Istio ingress pod..."
-#kubectl -n istio-system get pod -l istio=ingressgateway
-#
-#echo "Checking App deployment..."
-#kubectl get deploy -A | grep app
-#kubectl get svc -A | grep app
-
-
+helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo update
 echo "Running Terraform..."
 pushd "$ROOT/terraform" >/dev/null
 terraform init -upgrade

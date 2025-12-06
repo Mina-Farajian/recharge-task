@@ -1,19 +1,21 @@
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: app-virtualservice
-  namespace: istio-system
+  namespace: default
 spec:
   hosts:
     - "api.app.com"
   gateways:
-    - app-gateway
+    # reference the Gateway installed in istio-system namespace
+    - "istio-system/app-gateway"
   http:
     - match:
         - uri:
             prefix: "/"
       route:
         - destination:
+            # service must match the actual service name created by your Helm chart
             host: app.default.svc.cluster.local
             port:
               number: 8080

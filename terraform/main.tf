@@ -1,11 +1,26 @@
+resource "null_resource" "wait_for_istio_crds" {
+  depends_on = [helm_release.istiod]
+
+  provisioner "local-exec" {
+    command = <<EOT
+set -e
+echo "Waiting for Istio CRDs..."
+until kubectl get crd gateways.networking.istio.io >/dev/null 2>&1; do
+  sleep 2
+done
+echo "Istio CRDs available."
+EOT
+  }
+}
+
+
 data "local_file" "istio_gateway" {
   filename = "../k8s/istio-gateway.yaml"
 }
 
 resource "kubernetes_manifest" "istio_gateway" {
   depends_on = [
-    helm_release.istio_base,
-    helm_release.istiod,
+    null_resource.wait_for_istio_crds,
     helm_release.istio_ingress
   ]
   manifest = yamldecode(data.local_file.istio_gateway.content)
@@ -17,15 +32,11 @@ data "local_file" "istio_virtualservice" {
 
 resource "kubernetes_manifest" "istio_virtualservice" {
   depends_on = [
-    helm_release.istio_base,
-    helm_release.istiod,
-    helm_release.istio_ingress,
-    helm_release.app,
-    kubernetes_manifest.istio_gateway
+    kubernetes_manifest.istio_gateway,
+    helm_release.app
   ]
   manifest = yamldecode(data.local_file.istio_virtualservice.content)
 }
-
 
 
 #This tells Terraform:

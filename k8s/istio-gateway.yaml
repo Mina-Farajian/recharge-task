@@ -8,8 +8,8 @@ spec:
     istio: ingressgateway
   servers:
     - port:
-        number: 30080
-        name: http-30080
+        number: 80
+        name: http
         protocol: HTTP
       hosts:
         - "api.app.com"
