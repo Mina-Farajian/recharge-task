@@ -1,9 +1,16 @@
 #!/bin/bash
-#set -euo pipefail
 
 VERSION="1.0.0"
 IMAGE_NAME="app"
 ROOT=$(pwd)
+
+echo " you need to already have installed Docker, minikube, kubectl, helm, terraform, python3, pip, moto_server"
+echo "use pipx ensurepath after installing moto with pipx"
+for cmd in pipx python3 terraform docker kubectl; do
+    if ! command -v "$cmd" >/dev/null; then
+        echo "🚨 ALERT: '$cmd' not found. Install with: sudo apt install $cmd"
+    fi
+done
 
 echo "Ensuring Minikube is running..."
 STAT=`minikube status | grep host | cut -f2 -d: | tr -d ' '`
