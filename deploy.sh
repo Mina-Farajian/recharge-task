@@ -1,41 +1,23 @@
-
-# Install Docker
-#if docker doesnt exist:
-#
-#    sudo apt update
-#    sudo apt install ca-certificates curl -y
-#    sudo install -m 0755 -d /etc/apt/keyrings
-#    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-#    sudo chmod a+r /etc/apt/keyrings/docker.asc
-#
-#
-#  "  sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
-#      Types: deb
-#      URIs: https://download.docker.com/linux/ubuntu
-#      Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
-#      Components: stable
-#      Signed-By: /etc/apt/keyrings/docker.asc
-#    EOF
-#"
-#    sudo apt update
-#    sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-#    sudo systemctl start docker
-###################################################################################################
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
+#check existing a command
 if ! command -v minikube >/dev/null; then
   echo "Install minikube first."
   exit 1
 fi
 
+#check return code
 if ! minikube status >/dev/null 2>&1; then
   echo "Starting minikube..."
   minikube start
 fi
 
-#executes outputs
+echo "Switching Minikube to use local Docker daemon..."
+#executes outputs of command as shell commands
+# app image MUST be built into Minikube’s Docker, NOT host system.
+#Otherwise Kubernetes cannot find image
 eval "$(minikube docker-env)"
 
 echo "Building app image into minikube..."
@@ -54,7 +36,7 @@ if [ ! -d ".terraform" ]; then
   terraform init
 fi
 
-terraform
+
 terraform apply #-auto-approve
 popd >/dev/null
 
