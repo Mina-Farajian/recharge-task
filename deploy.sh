@@ -6,7 +6,7 @@ IMAGE_NAME="app"
 ROOT=$(pwd)
 
 echo "Ensuring Minikube is running..."
-STAT=`minikube status | grep host | cut -f2 -d: | tr -d ' '`
+STAT=$()minikube status | grep host | cut -f2 -d: | tr -d ' ')
 if [ "$STAT" = "Stopped" ]; then
     echo "Minikube is stopped. Starting Minikube..."
     minikube start
