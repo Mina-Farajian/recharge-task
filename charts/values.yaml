@@ -4,7 +4,7 @@ namespace: dev
 name: my-app
 image:
   repository: python
-  tag: "3.11-slim"
+  tag: "latest"
   pullPolicy: IfNotPresent
 autoscaling:
   enabled: false
