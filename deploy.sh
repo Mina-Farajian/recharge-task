@@ -1,20 +1,22 @@
 #!/bin/bash
 set -euo pipefail
+
 VERSION="1.0.0"
 IMAGE_NAME="app"
 ROOT=$(pwd)
 
 echo "Ensuring Minikube is running..."
-minikube status
-status=`minikube status |grep host |cut -f2 -d:`
-if status = "Stopped" then;
- minikube start
+status=$(minikube status | grep host | cut -f2 -d: | tr -d ' ')
+if [ "$status" = "Stopped" ]; then
+    echo "Starting Minikube..."
+    minikube start
 fi
 
 echo "Building app image on host Docker..."
 docker build -t "$IMAGE_NAME:$VERSION" "$ROOT/app"
+
 echo "Loading image into Minikube..."
-minikube image load app:latest
+minikube image load "$IMAGE_NAME:$VERSION"
 
 echo "Exporting Minikube IP..."
 export MINIKUBE_IP=$(minikube ip)
@@ -32,9 +34,9 @@ docker_image = "$IMAGE_NAME:$VERSION"
 EOF
 
 echo "Running Terraform..."
-pushd "$ROOT/terraform"
+pushd "$ROOT/terraform" >/dev/null
 terraform init -upgrade
 terraform apply -auto-approve
-popd
+popd >/dev/null
 
 echo "Deployment completed successfully!"
