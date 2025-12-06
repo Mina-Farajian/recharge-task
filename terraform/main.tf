@@ -1,5 +1,5 @@
 data "local_file" "istio_gateway" {
-  filename = "${path.module}/../k8s/istio-gateway.yaml"
+  filename = "./k8s/istio-gateway.yaml"
 }
 
 resource "kubernetes_manifest" "istio_gateway" {
@@ -8,7 +8,7 @@ resource "kubernetes_manifest" "istio_gateway" {
 }
 
 data "local_file" "istio_virtualservice" {
-  filename = "${path.module}/../k8s/istio-virtualservice.yaml"
+  filename = "./k8s/istio-virtualservice.yaml"
 }
 
 resource "kubernetes_manifest" "istio_virtualservice" {

@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: app-virtualservice
-  namespace: default
+  namespace: dev
 spec:
   hosts:
     - "api.app.com"

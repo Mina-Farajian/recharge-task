@@ -21,7 +21,7 @@ resource "helm_release" "istio_ingress" {
   chart      = "gateway"
   namespace  = "istio-system"
 
-  values = [file("${path.module}/istio-values.yaml")]
+  values = [file("./istio-values.yaml")]
 
   depends_on = [helm_release.istiod]
 }

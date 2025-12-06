@@ -34,7 +34,6 @@ provider "aws" {
   # If you run moto on localhost, you can set endpoints here.
   # Note: this is fragile depending on provider version and service names.
   endpoints {
-    # example — may need tuning or you can skip applying AWS resources locally
     elb = "http://localhost:5000"
     # cloudfront = "http://localhost:5000"  # not always supported
   }

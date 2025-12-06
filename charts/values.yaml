@@ -1,5 +1,6 @@
 Deployment:
 replicaCount: 2
+namespace: dev
 name: my-app
 image:
   repository: python
@@ -8,6 +9,7 @@ image:
 
 
 service:
+  namespace: dev
   type: ClusterIP
   port: 8080
   targetPort: 8080
