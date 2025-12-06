@@ -3,7 +3,7 @@
   #“Hey, read this file and give me its contents as a string.”
 
 data "local_file" "istio_gateway" {
-  filename = "./k8s/istio-gateway.yaml"
+  filename = ".k8s/istio-gateway.yaml"
 }
 
 resource "kubernetes_manifest" "istio_gateway" {
@@ -16,7 +16,7 @@ resource "kubernetes_manifest" "istio_gateway" {
 
 
 data "local_file" "istio_virtualservice" {
-  filename = "./k8s/istio-virtualservice.yaml"
+  filename = ".k8s/istio-virtualservice.yaml"
 }
 
 resource "kubernetes_manifest" "istio_virtualservice" {

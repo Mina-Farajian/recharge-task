@@ -45,4 +45,10 @@ terraform init -upgrade
 terraform apply -auto-approve
 popd >/dev/null
 
+NODE_IP=$(minikube ip)
+echo
+echo "Ready. Test with:"
+echo "  curl -v -H 'Host: api.app.com' http://${NODE_IP}:30080/info"
+echo
+
 echo "Deployment completed successfully!"
