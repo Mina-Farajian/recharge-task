@@ -39,6 +39,7 @@ if ! pgrep -f moto_server >/dev/null; then
     sleep 10
 fi
 
+echo `istioctl version`
 
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update

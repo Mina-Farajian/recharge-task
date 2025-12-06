@@ -9,7 +9,7 @@ Local setup that:
 - App responds on GET /info with Pod IP and `X-Pod-IP` header
 
 ## Quick run (Ubuntu)
-1. Install prerequisites (Docker, minikube, kubectl, helm, terraform, python3, pip, pipx).
+1. Install prerequisites (Docker, minikube, kubectl, helm, terraform, python3, pip, pipx, istioctl).
 2. Build & deploy:
    ```bash
    chmod +x deploy.sh
