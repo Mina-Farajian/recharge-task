@@ -34,7 +34,7 @@ echo "Minikube IP = $MINIKUBE_IP"
 
 echo "Starting moto_server (AWS mock) on port 5000..."
 if ! pgrep -f moto_server >/dev/null; then
-    moto_server --host 0.0.0.0 --port 5000 & &
+    moto_server --host 0.0.0.0 --port 5000  &
     sleep 10
 fi
 
