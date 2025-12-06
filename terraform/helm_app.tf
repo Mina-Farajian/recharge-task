@@ -1,5 +1,5 @@
 resource "helm_release" "app" {
   name       = "app"
-  chart      = "./charts/app-chart"
+  chart      = "./charts/"
   namespace  = "dev"
 }

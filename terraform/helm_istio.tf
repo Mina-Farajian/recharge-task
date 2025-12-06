@@ -1,3 +1,4 @@
+#CRD
 resource "helm_release" "istio_base" {
   name       = "istio-base"
   repository = "https://istio-release.storage.googleapis.com/charts"
@@ -6,6 +7,7 @@ resource "helm_release" "istio_base" {
   create_namespace = true
 }
 
+#control plane
 resource "helm_release" "istiod" {
   name       = "istiod"
   repository = "https://istio-release.storage.googleapis.com/charts"
