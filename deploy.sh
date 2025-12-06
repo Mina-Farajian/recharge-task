@@ -6,15 +6,12 @@ IMAGE_NAME="app"
 ROOT=$(pwd)
 
 echo "Ensuring Minikube is running..."
-STAT=$(minikube status | grep host | cut -f2 -d: | tr -d ' ')
-
-echo "Minikube host status: $STAT"
+STAT=`minikube status | grep host | cut -f2 -d: | tr -d ' '`
 if [ "$STAT" = "Stopped" ]; then
     echo "Minikube is stopped. Starting Minikube..."
     minikube start
-else
-    echo "Minikube is already running."
 fi
+
 echo "Building app image on host Docker..."
 docker build -t "$IMAGE_NAME:$VERSION" "$ROOT/app"
 
