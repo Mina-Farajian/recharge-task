@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+#set -euo pipefail
 
 VERSION="1.0.0"
 IMAGE_NAME="app"
