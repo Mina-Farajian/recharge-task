@@ -32,6 +32,8 @@ minikube image load "$IMAGE_NAME:$VERSION"
 echo "Exporting Minikube IP..."
 export MINIKUBE_IP=$(minikube ip)
 echo "Minikube IP = $MINIKUBE_IP"
+TFWARS_FILE="terraform/terraform.tfvars"
+sed -i "s|minikube_ip = \".*\"|minikube_ip = \"$MINIKUBE_IP\"|g" "$TFWARS_FILE"
 
 echo "Starting moto_server (AWS mock) on port 5000..."
 if ! pgrep -f moto_server >/dev/null; then
