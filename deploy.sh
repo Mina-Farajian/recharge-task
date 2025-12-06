@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+set -e
 VERSION="1.0.0"
 IMAGE_NAME="app"
 ROOT=$(pwd)
@@ -34,14 +34,10 @@ echo "Minikube IP = $MINIKUBE_IP"
 
 echo "Starting moto_server (AWS mock) on port 5000..."
 if ! pgrep -f moto_server >/dev/null; then
-    moto_server --host 0.0.0.0 --port 5000 elbv2 cloudfront waf &
-    sleep 3
+    moto_server --host 0.0.0.0 --port 5000 & &
+    sleep 10
 fi
 
-#cat > "$ROOT/terraform/terraform.tfvars" <<EOF
-#minikube_ip = "$MINIKUBE_IP"
-#docker_image = "$IMAGE_NAME:$VERSION"
-#EOF
 
 echo "Running Terraform..."
 pushd "$ROOT/terraform" >/dev/null
