@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 VERSION="1.0.0"
 IMAGE_NAME="app"
 ROOT=$(pwd)
@@ -12,6 +13,8 @@ for cmd in pipx python3 terraform docker kubectl; do
     fi
 done
 
+echo "Make sure you have updated image's TAG in this script
+ "
 echo "Ensuring Minikube is running..."
 STAT=`minikube status | grep host | cut -f2 -d: | tr -d ' '`
 if [ "$STAT" = "Stopped" ]; then
@@ -19,7 +22,7 @@ if [ "$STAT" = "Stopped" ]; then
     minikube start
 fi
 
-echo "Building app image on host Docker..."
+echo "Building app image on host Docker... TAG is $VERSION"
 docker build -t "$IMAGE_NAME:$VERSION" "$ROOT/app"
 
 echo "Loading image into Minikube..."
@@ -35,10 +38,10 @@ if ! pgrep -f moto_server >/dev/null; then
     sleep 3
 fi
 
-cat > "$ROOT/terraform/terraform.tfvars" <<EOF
-minikube_ip = "$MINIKUBE_IP"
-docker_image = "$IMAGE_NAME:$VERSION"
-EOF
+#cat > "$ROOT/terraform/terraform.tfvars" <<EOF
+#minikube_ip = "$MINIKUBE_IP"
+#docker_image = "$IMAGE_NAME:$VERSION"
+#EOF
 
 echo "Running Terraform..."
 pushd "$ROOT/terraform" >/dev/null
