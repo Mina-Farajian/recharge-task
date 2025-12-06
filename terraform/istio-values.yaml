@@ -1,3 +1,16 @@
+gateways:
+  enabled: true
+
+pilot:
+  enabled: true
+
+global:
+  hub: docker.io/istio
+  tag: "1.22.0" # adjust if needed
+
+gateway:
+  enabled: true
+
 service:
   type: NodePort
   ports:
