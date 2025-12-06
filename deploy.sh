@@ -42,6 +42,10 @@ if ! pgrep -f moto_server >/dev/null; then
 fi
 
 echo `istioctl version`
+helm upgrade --install my-app ./charts \
+            --atomic --wait --timeout 3m0s \
+            --namespace dev \
+            -f charts/values.yaml
 
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update

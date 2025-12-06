@@ -19,7 +19,7 @@ resource "helm_release" "istio_base" {
   create_namespace = true
 
   wait    = true
-  timeout = 60
+  timeout = 10
 
   depends_on = [null_resource.add_istio_repo]
 }
@@ -33,7 +33,7 @@ resource "helm_release" "istiod" {
   namespace  = "istio-system"
 
   wait    = true
-  timeout = 60
+  timeout = 10
 
   depends_on = [
     helm_release.istio_base
@@ -51,7 +51,7 @@ resource "helm_release" "istio_ingress" {
   values = [file("${path.module}/istio-values.yaml")]
 
   wait    = true
-  timeout = 60
+  timeout = 10
 
   depends_on = [
     helm_release.istiod
