@@ -9,6 +9,10 @@ image:
 autoscaling:
   enabled: false
 
+serviceAccount:
+ create: false
+ name: ""
+
 service:
   namespace: dev
   type: ClusterIP
