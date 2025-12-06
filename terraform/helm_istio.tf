@@ -6,7 +6,7 @@ resource "helm_release" "istio_base" {
   namespace  = "istio-system"
   create_namespace = true
   wait    = true
-  timeout = 30
+  timeout = 600
 }
 
 #control plane
@@ -18,7 +18,7 @@ resource "helm_release" "istiod" {
 
   depends_on = [helm_release.istio_base]
   wait    = true
-  timeout = 30
+  timeout = 600
 }
 
 resource "helm_release" "istio_ingress" {
@@ -31,5 +31,5 @@ resource "helm_release" "istio_ingress" {
 
   depends_on = [helm_release.istiod]
   wait    = true
-  timeout = 30
+  timeout = 600
 }

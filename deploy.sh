@@ -44,10 +44,10 @@ fi
 #kubectl get ns istio-system
 #
 #echo "Checking Istio CRDs..."
-#kubectl get crd | grep istio || echo "❌ Istio CRDs missing"
+#kubectl get crd
 #
 #echo "Checking Gateway API..."
-#kubectl api-resources | grep Gateway || echo "❌ Gateway kind not found"
+#kubectl api-resources | grep Gateway
 #
 #echo "Checking Istio ingress pod..."
 #kubectl -n istio-system get pod -l istio=ingressgateway
