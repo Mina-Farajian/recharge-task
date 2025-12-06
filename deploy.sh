@@ -4,6 +4,7 @@ set -e
 VERSION="1.0.0"
 IMAGE_NAME="app"
 ROOT=$(pwd)
+namespace="istio-system"
 
 echo " you need to already have installed Docker, minikube, kubectl, helm, terraform, python3, pip, moto_server"
 echo "use pipx ensurepath after installing moto with pipx"
@@ -37,6 +38,23 @@ if ! pgrep -f moto_server >/dev/null; then
     moto_server --host 0.0.0.0 --port 5000  &
     sleep 10
 fi
+
+
+echo "Checking namespaces..."
+kubectl get ns istio-system
+
+echo "Checking Istio CRDs..."
+kubectl get crd | grep istio || echo "❌ Istio CRDs missing"
+
+echo "Checking Gateway API..."
+kubectl api-resources | grep Gateway || echo "❌ Gateway kind not found"
+
+echo "Checking Istio ingress pod..."
+kubectl -n istio-system get pod -l istio=ingressgateway
+
+echo "Checking App deployment..."
+kubectl get deploy -A | grep app
+kubectl get svc -A | grep app
 
 
 echo "Running Terraform..."

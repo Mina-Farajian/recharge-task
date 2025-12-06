@@ -5,6 +5,8 @@ resource "helm_release" "istio_base" {
   chart      = "base"
   namespace  = "istio-system"
   create_namespace = true
+  wait    = true
+  timeout = 300
 }
 
 #control plane
@@ -15,6 +17,8 @@ resource "helm_release" "istiod" {
   namespace  = "istio-system"
 
   depends_on = [helm_release.istio_base]
+  wait    = true
+  timeout = 300
 }
 
 resource "helm_release" "istio_ingress" {
@@ -26,4 +30,6 @@ resource "helm_release" "istio_ingress" {
   values = [file("./istio-values.yaml")]
 
   depends_on = [helm_release.istiod]
+  wait    = true
+  timeout = 300
 }
