@@ -6,9 +6,17 @@ data "local_file" "istio_gateway" {
   filename = "../k8s/istio-gateway.yaml"
 }
 
+resource "time_sleep" "wait_for_istio_crds" {
+  # Wait 20 seconds for the CRDs to be registered by the Kubernetes API server.
+  create_duration = "20s"
+  depends_on = [helm_release.istio_base]
+}
 resource "kubernetes_manifest" "istio_gateway" {
   manifest = yamldecode(data.local_file.istio_gateway.content)
-  depends_on = [helm_release.istio_ingress]
+  depends_on = [
+    helm_release.istio_ingress,
+    time_sleep.wait_for_istio_crds
+  ]
 }
 # yamldecode(...) converts the YAML string → Terraform map.
 # kubernetes_manifest takes that map and applies it to the cluster.
