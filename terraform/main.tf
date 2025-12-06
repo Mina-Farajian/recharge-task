@@ -1,5 +1,10 @@
+#########################################
+# Wait for Istio CRDs
+#########################################
 resource "null_resource" "wait_for_istio_crds" {
-  depends_on = [helm_release.istiod]
+  depends_on = [
+    helm_release.istiod
+  ]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -13,7 +18,9 @@ EOT
   }
 }
 
-
+#########################################
+# Istio Gateway
+#########################################
 data "local_file" "istio_gateway" {
   filename = "../k8s/istio-gateway.yaml"
 }
@@ -26,6 +33,9 @@ resource "kubernetes_manifest" "istio_gateway" {
   manifest = yamldecode(data.local_file.istio_gateway.content)
 }
 
+#########################################
+# Istio VirtualService
+#########################################
 data "local_file" "istio_virtualservice" {
   filename = "../k8s/istio-virtualservice.yaml"
 }
