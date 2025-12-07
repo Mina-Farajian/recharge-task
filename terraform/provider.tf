@@ -34,8 +34,8 @@ provider "aws" {
 
   endpoints {
     ec2        = "http://localhost:5000"
-    elbv2      = "http://localhost:5000" # ALB
+    elbv2 = "http://localhost:5000" # ALB
     cloudfront = "http://localhost:5000"
     wafv2      = "http://localhost:5000"
- }
-
+  }
+}
