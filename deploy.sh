@@ -1,10 +1,15 @@
 #!/bin/bash
 
+# Exit immediately if a command exits with a non-zero status.
 set -e
-VERSION="1.0.0"
+
+VERSION="1.0.1"
 IMAGE_NAME="app"
 ROOT=$(pwd)
-namespace="istio-system"
+TERRAFORM_DIR="$ROOT/terraform"
+CHARTS_DIR="./charts"
+NAMESPACE_APP="dev"
+NAMESPACE_ISTIO="istio-system"
 
 echo " you need to already have installed Docker, minikube, kubectl, helm, terraform, python3, pip, moto_server"
 echo "use pipx ensurepath after installing moto with pipx"
@@ -14,8 +19,7 @@ for cmd in pipx python3 terraform docker kubectl; do
     fi
 done
 
-echo "Make sure you have updated image's TAG in this script
- "
+echo "Make sure you have updated image's TAG in this script"
 echo "Ensuring Minikube is running..."
 STAT=`minikube status | grep host | cut -f2 -d: | tr -d ' '`
 if [ "$STAT" = "Stopped" ]; then
@@ -23,43 +27,61 @@ if [ "$STAT" = "Stopped" ]; then
     minikube start
 fi
 
+# --- 1. IMAGE BUILD & LOAD ---
 echo "Building app image on host Docker... TAG is $VERSION"
+# Assumes Dockerfile is in $ROOT/app
 docker build -t "$IMAGE_NAME:$VERSION" "$ROOT/app"
 
 echo "Loading image into Minikube..."
 minikube image load "$IMAGE_NAME:$VERSION"
 
+# --- 2. SETUP IP & MOTO ---
 echo "Exporting Minikube IP..."
 export MINIKUBE_IP=$(minikube ip)
 echo "Minikube IP = $MINIKUBE_IP"
-TFWARS_FILE="terraform/terraform.tfvars"
+
+# Safely update the minikube_ip variable in terraform.tfvars
+TFWARS_FILE="$TERRAFORM_DIR/terraform.tfvars"
 sed -i "s|minikube_ip = \".*\"|minikube_ip = \"$MINIKUBE_IP\"|g" "$TFWARS_FILE"
 
 echo "Starting moto_server (AWS mock) on port 5000..."
 if ! pgrep -f moto_server >/dev/null; then
-    moto_server --host 0.0.0.0 --port 5000  &
+    moto_server --host 0.0.0.0 --port 5000 &
     sleep 10
 fi
 
-echo `istioctl version`
-helm upgrade --install my-app ./charts \
-             --rollback-on-failure --wait --timeout 1m \
-            --namespace dev \
-            -f charts/values.yaml
+# --- 3. INFRASTRUCTURE DEPLOYMENT (Terraform: AWS/Moto & Istio Base) ---
+echo "Running Terraform to install Istio Base and AWS/Moto resources..."
+pushd "$TERRAFORM_DIR" >/dev/null
 
-helm repo add istio https://istio-release.storage.googleapis.com/charts
-helm repo update
-echo "Running Terraform..."
-pushd "$ROOT/terraform" >/dev/null
 terraform init -upgrade
 echo "minikube ip is $MINIKUBE_IP"
 terraform apply -auto-approve
+
 popd >/dev/null
 
+# --- 4. ISTIO SETUP (Post-Terraform) ---
+echo "Applying Istio Sidecar Injection Label to '$NAMESPACE_APP' namespace..."
+# This must be run AFTER the 'dev' namespace is created by Terraform (or the k8s provider)
+kubectl label namespace "$NAMESPACE_APP" istio-injection=enabled --overwrite
+
+echo "Waiting for Istio Ingress Gateway to be available (max 1 minute)..."
+# Wait for the Istio ingress gateway Pod to be running
+kubectl wait --namespace "$NAMESPACE_ISTIO" --for=condition=Ready pod -l app=istio-ingressgateway --timeout=1m
+
+# --- 5. APPLICATION DEPLOYMENT (Helm) ---
+echo "Deploying application 'my-app' via Helm..."
+helm upgrade --install my-app "$CHARTS_DIR" \
+             --rollback-on-failure --wait --timeout 3m \
+            --namespace "$NAMESPACE_APP" \
+            -f "$CHARTS_DIR/values.yaml"
+
+# --- 6. TEST INSTRUCTIONS ---
 NODE_IP=$(minikube ip)
 echo
-echo "Ready. Test with:"
+echo "========================================================"
+echo "✅ Deployment completed successfully!"
+echo "Istio Ingress Gateway is running on NodePort 30080."
+echo "Ready. Test the full path (assuming api.app.com is in /etc/hosts) with:"
 echo "  curl -v -H 'Host: api.app.com' http://${NODE_IP}:30080/info"
-echo
-
-echo "Deployment completed successfully!"
+echo "========================================================"
