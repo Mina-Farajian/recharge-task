@@ -56,18 +56,40 @@ pushd "$TERRAFORM_DIR" >/dev/null
 
 terraform init -upgrade
 echo "minikube ip is $MINIKUBE_IP"
-terraform apply
+terraform apply -auto-approve
 
 popd >/dev/null
 
-# --- 4. ISTIO SETUP (Post-Terraform) ---
+# --- 4. ISTIO DEPLOYMENT (Full Control in Shell) ---
+echo "--- Installing Istio Control Plane and Gateway (CRD Sync Controlled) ---"
+helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo update
+
+# Install Base (CRDs)
+echo "Installing Istio Base (CRDs)..."
+helm install istio-base istio/base -n "$NAMESPACE_ISTIO" --create-namespace --wait --timeout 60s
+
+# Install Istiod (Control Plane)
+echo "Installing Istiod (Control Plane)..."
+helm install istiod istio/istiod -n "$NAMESPACE_ISTIO" --wait --timeout 120s
+
+# Install Ingress Gateway (with NodePort 30080 config from istio-values.yaml)
+echo "Installing Istio Ingress Gateway..."
+helm install istio-ingressgateway istio/gateway -n "$NAMESPACE_ISTIO" \
+  -f "$TERRAFORM_DIR/istio-values.yaml" --wait --timeout 60s
+
+# Robust wait for the deployment to be ready
+echo "Waiting for Istio Ingress Gateway Deployment to be Available..."
+kubectl wait --namespace "$NAMESPACE_ISTIO" --for=condition=Available deployment/istio-ingressgateway --timeout=120s
+
+# Apply Istio Injection Label
 echo "Applying Istio Sidecar Injection Label to '$NAMESPACE_APP' namespace..."
-# This must be run AFTER the 'dev' namespace is created by Terraform (or the k8s provider)
 kubectl label namespace "$NAMESPACE_APP" istio-injection=enabled --overwrite
 
-echo "Waiting for Istio Ingress Gateway to be available (max 1 minute)..."
-# Wait for the Istio ingress gateway Pod to be running
-kubectl wait --namespace "$NAMESPACE_ISTIO" --for=condition=Ready pod -l app=istio-ingressgateway --timeout=1m
+# Apply Istio Custom Resources (Gateway and VirtualService)
+echo "Applying Istio Gateway and VirtualService..."
+kubectl apply -f "$K8S_CONFIG_DIR/istio-gateway.yaml"
+kubectl apply -f "$K8S_CONFIG_DIR/istio-virtualservice.yaml"
 
 # --- 5. APPLICATION DEPLOYMENT (Helm) ---
 echo "Deploying application 'my-app' via Helm..."
