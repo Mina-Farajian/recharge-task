@@ -42,8 +42,7 @@ data "local_file" "istio_virtualservice" {
 
 resource "kubernetes_manifest" "istio_virtualservice" {
   depends_on = [
-    kubernetes_manifest.istio_gateway,
-    helm_release.app
+    kubernetes_manifest.istio_gateway
   ]
   manifest = yamldecode(data.local_file.istio_virtualservice.content)
 }
