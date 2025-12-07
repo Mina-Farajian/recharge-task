@@ -43,7 +43,7 @@ fi
 
 echo `istioctl version`
 helm upgrade --install my-app ./charts \
-            --atomic --wait --timeout 3m0s \
+             --rollback-on-failure--wait --timeout 1m \
             --namespace dev \
             -f charts/values.yaml
 
