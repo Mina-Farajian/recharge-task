@@ -67,15 +67,15 @@ helm repo update
 
 # Install Base (CRDs)
 echo "Installing Istio Base (CRDs)..."
-helm install istio-base istio/base -n "$NAMESPACE_ISTIO" --create-namespace --wait --timeout 60s
+helm upgrade --install istio-base istio/base -n "$NAMESPACE_ISTIO" --create-namespace --wait --timeout 60s
 
 # Install Istiod (Control Plane)
 echo "Installing Istiod (Control Plane)..."
-helm install istiod istio/istiod -n "$NAMESPACE_ISTIO" --wait --timeout 120s
+helm upgrade --install istiod istio/istiod -n "$NAMESPACE_ISTIO" --wait --timeout 120s
 
 # Install Ingress Gateway (with NodePort 30080 config from istio-values.yaml)
 echo "Installing Istio Ingress Gateway..."
-helm install istio-ingressgateway istio/gateway -n "$NAMESPACE_ISTIO" \
+helm upgrade --install istio-ingressgateway istio/gateway -n "$NAMESPACE_ISTIO" \
   -f "$TERRAFORM_DIR/istio-values.yaml" --wait --timeout 60s
 
 # Robust wait for the deployment to be ready
