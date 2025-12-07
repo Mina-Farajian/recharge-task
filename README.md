@@ -9,7 +9,7 @@ Local setup that:
 - App responds on GET /info with Pod IP and `X-Pod-IP` header
 
 ## Quick run (Ubuntu)
-1. Install prerequisites (Docker, minikube, kubectl, helm, terraform, python3, pip, pipx, istioctl).
+1. Install prerequisites (Docker, minikube, kubectl, helm, terraform, python3, pip, pipx, moto[server]).
 2. Build & deploy:
    ```bash
    chmod +x deploy.sh
@@ -37,9 +37,7 @@ recharge-task/
 ├─ terraform/             
 │  ├─ providers.tf
 │  ├─ istio-values.yaml
-│  ├─ helm_istio.tf        # Installs Istio (base, istiod, ingress)
-│  ├─ helm_app.tf          # Installs app
-│  ├─ main.tf              # Loads YAML manifests & deploys them
+│  ├─ main.tf              
 │  ├─ variables.tf
 │  └─ outputs.tf
 │
