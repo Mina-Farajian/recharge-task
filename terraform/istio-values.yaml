@@ -1,14 +1,9 @@
-# Configure the built-in ingress gateway to expose nodePort 30080
-ingressGateways:
-  - name: istio-ingressgateway
-    enabled: true
-    label:
-      istio: ingressgateway
-    k8s:
-      service:
-        type: NodePort
-        ports:
-          - port: 80
-            name: http2
-            targetPort: 8080
-            nodePort: 30080
+# istio/gateway (Istio 1.28)
+service:
+  type: NodePort
+  ports:
+    - name: http2
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
+
