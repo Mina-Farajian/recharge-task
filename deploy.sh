@@ -89,7 +89,7 @@ kubectl label namespace "$NAMESPACE_APP" istio-injection=enabled --overwrite
 # Apply Istio Custom Resources (Gateway and VirtualService)
 echo "Applying Istio Gateway and VirtualService..."
 kubectl apply -f "$ROOT/k8s/istio-gateway.yaml"
-kubectl apply -f "$ROOT/k8S/istio-virtualservice.yaml"
+kubectl apply -f "$ROOT/k8s/istio-virtualservice.yaml"
 
 # --- 5. APPLICATION DEPLOYMENT (Helm) ---
 echo "Deploying application 'my-app' via Helm..."
