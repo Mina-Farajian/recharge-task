@@ -19,6 +19,7 @@ terraform {
 provider "kubernetes" {
   # use KUBECONFIG from environment (~/.kube/config or MINIKUBE)
   config_path = var.kubeconfig_path
+   host       = "https://${var.minikube_ip}:8443"
 }
 
 provider "helm" {
