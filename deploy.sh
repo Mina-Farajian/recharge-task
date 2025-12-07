@@ -88,15 +88,15 @@ kubectl label namespace "$NAMESPACE_APP" istio-injection=enabled --overwrite
 
 # Apply Istio Custom Resources (Gateway and VirtualService)
 echo "Applying Istio Gateway and VirtualService..."
-kubectl apply -f "../k8s/istio-gateway.yaml"
-kubectl apply -f "../k8S/istio-virtualservice.yaml"
+kubectl apply -f "./k8s/istio-gateway.yaml"
+kubectl apply -f "./k8S/istio-virtualservice.yaml"
 
 # --- 5. APPLICATION DEPLOYMENT (Helm) ---
 echo "Deploying application 'my-app' via Helm..."
-helm upgrade --install my-app "$CHARTS_DIR" \
+helm upgrade --install my-app "./charts" \
              --wait --timeout 3m \
             --namespace "$NAMESPACE_APP" \
-            -f "$CHARTS_DIR/values.yaml"
+            -f "./charts/values.yaml"
 
 # --- 6. TEST INSTRUCTIONS ---
 NODE_IP=$(minikube ip)
