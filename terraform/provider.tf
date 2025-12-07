@@ -29,9 +29,6 @@ provider "helm" {
 
 #
 provider "aws" {
-  region = "us-east-1"
-
-
   endpoints {
     ec2        = "http://localhost:5000"
     elbv2 = "http://localhost:5000" # ALB
