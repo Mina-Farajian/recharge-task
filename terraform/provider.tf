@@ -38,5 +38,5 @@ provider "helm" {
   #   elbv2      = "http://localhost:5000" # ALB
   #   cloudfront = "http://localhost:5000"
   #   wafv2      = "http://localhost:5000"
-  }
+ # }
 
