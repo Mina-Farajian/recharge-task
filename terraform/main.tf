@@ -3,7 +3,7 @@
 #########################################
 resource "null_resource" "wait_for_istio_crds" {
   depends_on = [
-    helm_release.istiod
+    helm_release.istio_base
   ]
 
   provisioner "local-exec" {
