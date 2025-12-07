@@ -33,10 +33,10 @@ provider "aws" {
 
   # If you run moto on localhost, you can set endpoints here.
   # Note: this is fragile depending on provider version and service names.
-  endpoints {
-    ec2        = "http://localhost:5000"
-    elbv2      = "http://localhost:5000" # ALB
-    cloudfront = "http://localhost:5000"
-    wafv2      = "http://localhost:5000"
+  # endpoints {
+  #   ec2        = "http://localhost:5000"
+  #   elbv2      = "http://localhost:5000" # ALB
+  #   cloudfront = "http://localhost:5000"
+  #   wafv2      = "http://localhost:5000"
   }
 }
