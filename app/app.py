@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 import socket
 import os
 
+app = Flask(__name__)
 @app.route('/info', methods=['GET'])
 def info():
     # Get Pod IP from environment variable or hostname
