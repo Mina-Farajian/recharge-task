@@ -56,7 +56,7 @@ pushd "$TERRAFORM_DIR" >/dev/null
 
 terraform init -upgrade
 echo "minikube ip is $MINIKUBE_IP"
-terraform apply -auto-approve
+terraform apply
 
 popd >/dev/null
 
@@ -72,7 +72,7 @@ kubectl wait --namespace "$NAMESPACE_ISTIO" --for=condition=Ready pod -l app=ist
 # --- 5. APPLICATION DEPLOYMENT (Helm) ---
 echo "Deploying application 'my-app' via Helm..."
 helm upgrade --install my-app "$CHARTS_DIR" \
-             --rollback-on-failure --wait --timeout 3m \
+             --wait --timeout 3m \
             --namespace "$NAMESPACE_APP" \
             -f "$CHARTS_DIR/values.yaml"
 
