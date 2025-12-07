@@ -27,9 +27,9 @@ provider "helm" {
   }
 }
 
-
-provider "aws" {
-  region = "us-east-1"
+#
+# provider "aws" {
+#   region = "us-east-1"
 
   # If you run moto on localhost, you can set endpoints here.
   # Note: this is fragile depending on provider version and service names.
