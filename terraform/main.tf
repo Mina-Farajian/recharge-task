@@ -9,14 +9,16 @@ resource "null_resource" "wait_for_istio_crds" {
   provisioner "local-exec" {
     command = <<EOT
 set -e
-echo "Waiting for Istio CRDs..."
-until kubectl get crd gateways.networking.istio.io >/dev/null 2>&1; do
-  sleep 2
-done
+echo "Waiting for Istio CRDs to be Established..."
+# Using kubectl wait: Checks until the CRD is fully registered (condition=established)
+# This is more robust and cleaner than an 'until sleep' loop.
+kubectl wait --for=condition=established crd/gateways.networking.istio.io --timeout=90s
 echo "Istio CRDs available."
 EOT
   }
 }
+
+
 
 #########################################
 # Istio Gateway
