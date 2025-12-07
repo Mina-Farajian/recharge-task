@@ -17,7 +17,3 @@ ingressGateways:
             name: http2
             targetPort: 8080
             nodePort: 30080
-          - port: 443
-            name: https
-            targetPort: 8443
-            nodePort: 30443
