@@ -1,19 +1,19 @@
 #########################################
 # Wait for Istio CRDs
 #########################################
-resource "null_resource" "wait_for_istio_crds" {
+resource "null_resource" "wait_for_istio_ready" {
+  # Now depends on the component that *deploys* the gateway Pods
   depends_on = [
-    helm_release.istio_base
+    helm_release.istio_ingress
   ]
 
   provisioner "local-exec" {
     command = <<EOT
 set -e
-echo "Waiting for Istio CRDs to be Established..."
-# Using kubectl wait: Checks until the CRD is fully registered (condition=established)
-# This is more robust and cleaner than an 'until sleep' loop.
-kubectl wait --for=condition=established crd/gateways.networking.istio.io --timeout=90s
-echo "Istio CRDs available."
+echo "Waiting for Istio Ingress Gateway Pods to be Ready..."
+# Wait for the Istio Ingress Gateway Deployment to be Ready
+kubectl wait --namespace istio-system --for=condition=Available deployment/istio-ingressgateway --timeout=120s
+echo "Istio Ingress Gateway is Ready."
 EOT
   }
 }
@@ -29,8 +29,7 @@ data "local_file" "istio_gateway" {
 
 resource "kubernetes_manifest" "istio_gateway" {
   depends_on = [
-    null_resource.wait_for_istio_crds,
-    helm_release.istio_ingress
+    null_resource.wait_for_istio_ready
   ]
   manifest = yamldecode(data.local_file.istio_gateway.content)
 }
