@@ -54,7 +54,7 @@ kubectl delete deployment istio-ingressgateway -n istio-system || true
 kubectl delete service istio-ingressgateway -n istio-system || true
 kubectl delete gateway app-gateway -n istio-system || true
 helm delete istio-ingressgateway -n istio-system || true
-
+kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
 sleep 5
 
 # --- 3. INFRASTRUCTURE DEPLOYMENT (Terraform: AWS/Moto & Istio Base) ---
@@ -74,7 +74,6 @@ echo "Deploying application 'my-app' via Helm..."
 helm upgrade --install my-app "./charts" \
              --wait --timeout 3m \
              --namespace "$NAMESPACE_APP" \
-             --create-namespace \
              -f "./charts/values.yaml"
 
 # --- 5. TEST INSTRUCTIONS ---
