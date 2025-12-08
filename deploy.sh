@@ -3,7 +3,7 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-VERSION="1.0.1"
+VERSION="1.0.2"
 IMAGE_NAME="app"
 ROOT=$(pwd)
 TERRAFORM_DIR="$ROOT/terraform"
@@ -11,7 +11,7 @@ CHARTS_DIR="./charts"
 NAMESPACE_APP="dev"
 NAMESPACE_ISTIO="istio-system"
 
-echo " you need to already have installed Docker, minikube, kubectl, helm, terraform, python3, pip, moto_server"
+echo " Please make sure you already have installed packages: Docker, minikube, kubectl, helm, terraform, python3, pip, moto_server"
 echo "use pipx ensurepath after installing moto with pipx"
 for cmd in pipx python3 terraform docker kubectl; do
     if ! command -v "$cmd" >/dev/null; then
@@ -29,7 +29,7 @@ fi
 
 # --- 1. IMAGE BUILD & LOAD ---
 echo "Building app image on host Docker... TAG is $VERSION"
-# Assumes Dockerfile is in $ROOT/app
+echo
 docker build -t "$IMAGE_NAME:$VERSION" "$ROOT/app"
 
 echo "Loading image into Minikube..."
@@ -52,6 +52,8 @@ fi
 #Cleanup
 kubectl delete deployment istio-ingressgateway -n istio-system || true
 kubectl delete service istio-ingressgateway -n istio-system || true
+kubectl delete gateway app-gateway -n istio-system
+
 sleep 5
 
 # --- 3. INFRASTRUCTURE DEPLOYMENT (Terraform: AWS/Moto & Istio Base) ---

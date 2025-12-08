@@ -18,8 +18,18 @@ EOT
   }
 }
 
+#########################################
+# Dev Namespace
+#########################################
 
-
+resource "kubernetes_namespace" "dev" {
+  metadata {
+    name = "dev"
+    labels = {
+      "istio-injection" = "enabled"
+    }
+  }
+}
 #########################################
 # Istio Gateway
 #########################################
