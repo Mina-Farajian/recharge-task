@@ -5,7 +5,7 @@ name: my-app
 image:
   repository: my-app
   tag: ""
-  pullPolicy: IfNotPresent
+  pullPolicy: Never
 
 autoscaling:
   enabled: false
