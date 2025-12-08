@@ -75,7 +75,7 @@ echo "Deploying application 'my-app' via Helm..."
 helm upgrade --install my-app "./charts" \
              --wait --timeout 3m \
              --namespace "$NAMESPACE_APP" \
-             --set "deployment.image.tag=${VERSION}" \
+             --set "Deployment.image.tag=${VERSION}" \
              -f "./charts/values.yaml"
 
 # --- 5. TEST INSTRUCTIONS ---

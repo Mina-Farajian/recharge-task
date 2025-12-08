@@ -1,13 +1,17 @@
+# charts/templates/deployment.yaml (FIXED)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
-  namespace: {{ .Values.namespace  }}
+  # FIX: Name now uses the nested path: .Values.Deployment.name
+  name: {{ .Values.Deployment.name }}
+  # FIX: Namespace should use .Release.Namespace (from -n dev command)
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "my-app.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  # FIX: Replicas now uses the nested path: .Values.Deployment.replicaCount
+  replicas: {{ .Values.Deployment.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -39,13 +43,14 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+          # FIX: Ensure BOTH repository and tag use the nested path
+          image: "{{ .Values.Deployment.image.repository }}:{{ .Values.Deployment.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.Deployment.image.pullPolicy | default "IfNotPresent" }}
           env:
-          - name: POD_IP
-            valueFrom:
-              fieldRef:
-               fieldPath: status.podIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
