@@ -39,8 +39,8 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.Deployment.image.repository }}:{{ .Values.Deployment.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.Deployment.image.pullPolicy | default "IfNotPresent" }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
           env:
           - name: POD_IP
             valueFrom:
