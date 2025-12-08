@@ -37,11 +37,13 @@ recharge-task/
 ├─ terraform/             
 │  ├─ providers.tf
 │  ├─ istio-values.yaml
-│  ├─ main.tf              
+│  ├─ helm_istio.tf        # Installs Istio (base, istiod, ingress)
+│  ├─ main.tf              # Loads YAML manifests & deploys them
 │  ├─ variables.tf
 │  └─ outputs.tf
 │
 ├─ deploy.sh               # Automated deploy script
 └─ README.md               
+            
 
 ```
