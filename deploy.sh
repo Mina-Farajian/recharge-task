@@ -4,7 +4,7 @@
 set -e
 
 VERSION="1.0.2"
-IMAGE_NAME="app"
+IMAGE_NAME="my-app"
 ROOT=$(pwd)
 TERRAFORM_DIR="$ROOT/terraform"
 CHARTS_DIR="./charts"
@@ -30,6 +30,7 @@ fi
 # --- 1. IMAGE BUILD & LOAD ---
 echo "Building app image on host Docker... TAG is $VERSION"
 echo
+eval $(minikube docker-env)
 docker build -t "$IMAGE_NAME:$VERSION" "$ROOT/app"
 
 echo "Loading image into Minikube..."
@@ -54,7 +55,7 @@ kubectl delete deployment istio-ingressgateway -n istio-system || true
 kubectl delete service istio-ingressgateway -n istio-system || true
 kubectl delete gateway app-gateway -n istio-system || true
 helm delete istio-ingressgateway -n istio-system || true
-kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace dev > /dev/null 2>&1 || true
 sleep 5
 
 # --- 3. INFRASTRUCTURE DEPLOYMENT (Terraform: AWS/Moto & Istio Base) ---
@@ -74,6 +75,7 @@ echo "Deploying application 'my-app' via Helm..."
 helm upgrade --install my-app "./charts" \
              --wait --timeout 3m \
              --namespace "$NAMESPACE_APP" \
+             --set Deployment.image.tag="${VERSION}" \
              -f "./charts/values.yaml"
 
 # --- 5. TEST INSTRUCTIONS ---

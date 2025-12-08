@@ -3,8 +3,8 @@ replicaCount: 2
 namespace: dev
 name: my-app
 image:
-  repository: python
-  tag: "latest"
+  repository: my-app
+  tag: ""
   pullPolicy: IfNotPresent
 autoscaling:
   enabled: false
