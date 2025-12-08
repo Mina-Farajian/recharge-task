@@ -52,7 +52,8 @@ fi
 #Cleanup
 kubectl delete deployment istio-ingressgateway -n istio-system || true
 kubectl delete service istio-ingressgateway -n istio-system || true
-kubectl delete gateway app-gateway -n istio-system
+kubectl delete gateway app-gateway -n istio-system || true
+helm delete istio-ingressgateway -n istio-system || true
 
 sleep 5
 
