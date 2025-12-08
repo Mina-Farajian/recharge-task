@@ -49,6 +49,10 @@ if ! pgrep -f moto_server >/dev/null; then
     moto_server --host 0.0.0.0 --port 5000 &
     sleep 10
 fi
+#Cleanup
+kubectl delete deployment istio-ingressgateway -n istio-system || true
+kubectl delete service istio-ingressgateway -n istio-system || true
+sleep 5
 
 # --- 3. INFRASTRUCTURE DEPLOYMENT (Terraform: AWS/Moto & Istio Base) ---
 echo "Running Terraform to install Istio Base and AWS/Moto resources..."
@@ -60,45 +64,15 @@ terraform apply -auto-approve
 
 popd >/dev/null
 
-# --- 4. ISTIO DEPLOYMENT (Full Control in Shell) ---
-#echo "--- Installing Istio Control Plane and Gateway (CRD Sync Controlled) ---"
-#helm repo add istio https://istio-release.storage.googleapis.com/charts
-#helm repo update
-#
-## Install Base (CRDs)
-#echo "Installing Istio Base (CRDs)..."
-#helm upgrade --install istio-base istio/base -n "$NAMESPACE_ISTIO" --create-namespace --wait --timeout 60s
-#
-## Install Istiod (Control Plane)
-#echo "Installing Istiod (Control Plane)..."
-#helm upgrade --install istiod istio/istiod -n "$NAMESPACE_ISTIO" --wait --timeout 120s
-#
-## Install Ingress Gateway (with NodePort 30080 config from istio-values.yaml)
-#echo "Installing Istio Ingress Gateway..."
-#helm upgrade --install istio-ingressgateway istio/gateway -n "$NAMESPACE_ISTIO" \
-#  -f "$TERRAFORM_DIR/istio-values.yaml" --wait --timeout 60s
 
-# Robust wait for the deployment to be ready
-#echo "Waiting for Istio Ingress Gateway Deployment to be Available..."
-#kubectl wait --namespace "$NAMESPACE_ISTIO" --for=condition=Available deployment/istio-ingressgateway --timeout=120s
-
-# Apply Istio Injection Label
-#echo "Applying Istio Sidecar Injection Label to '$NAMESPACE_APP' namespace..."
-#kubectl label namespace "$NAMESPACE_APP" istio-injection=enabled --overwrite
-
-# Apply Istio Custom Resources (Gateway and VirtualService)
-#echo "Applying Istio Gateway and VirtualService..."
-#kubectl apply -f "$ROOT/k8s/istio-gateway.yaml"
-#kubectl apply -f "$ROOT/k8s/istio-virtualservice.yaml"
-
-# --- 5. APPLICATION DEPLOYMENT (Helm) ---
+# --- 4. APPLICATION DEPLOYMENT (Helm) ---
 echo "Deploying application 'my-app' via Helm..."
 helm upgrade --install my-app "./charts" \
              --wait --timeout 3m \
             --namespace "$NAMESPACE_APP" \
             -f "./charts/values.yaml"
 
-# --- 6. TEST INSTRUCTIONS ---
+# --- 5. TEST INSTRUCTIONS ---
 NODE_IP=$(minikube ip)
 echo
 echo "========================================================"
