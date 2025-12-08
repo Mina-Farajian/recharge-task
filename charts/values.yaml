@@ -1,17 +1,18 @@
-Deployment:
 replicaCount: 2
 namespace: dev
 name: my-app
+
 image:
   repository: my-app
   tag: ""
   pullPolicy: IfNotPresent
+
 autoscaling:
   enabled: false
 
 serviceAccount:
- create: false
- name: ""
+  create: false
+  name: ""
 
 service:
   namespace: dev
