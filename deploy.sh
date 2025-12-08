@@ -68,11 +68,13 @@ popd >/dev/null
 
 
 # --- 4. APPLICATION DEPLOYMENT (Helm) ---
+echo
 echo "Deploying application 'my-app' via Helm..."
 helm upgrade --install my-app "./charts" \
              --wait --timeout 3m \
-            --namespace "$NAMESPACE_APP" \
-            -f "./charts/values.yaml"
+             --namespace "$NAMESPACE_APP" \
+             --create-namespace \
+             -f "./charts/values.yaml"
 
 # --- 5. TEST INSTRUCTIONS ---
 NODE_IP=$(minikube ip)
